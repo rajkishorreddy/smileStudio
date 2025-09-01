@@ -74,24 +74,62 @@ function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], [0, -150]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
+  const [ready, setReady] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Nudge autoplay (especially iOS/Safari)
+  React.useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const tryPlay = async () => {
+      try {
+        v.muted = true; // must be muted before play on mobile
+        await v.play();
+      } catch {
+        // ignore; poster stays until user interacts
+      }
+    };
+    tryPlay();
+  }, []);
+
   return (
     <section ref={ref} className="relative h-[100svh] w-full" aria-label="Hero">
-      {/* Video bg */}
       <div className="absolute inset-0 z-0 overflow-hidden rounded-b-[3rem] border-b border-white/10">
+        {/* Video (below) */}
         <video
+          ref={videoRef}
           className="h-full w-full object-cover"
           autoPlay
           muted
           loop
           playsInline
-          poster="https://images.unsplash.com/photo-1484704849700-f032a568e944?q=80&w=1440&auto=format&fit=crop"
+          preload="auto"
+          poster="/hero-poster.webp"      // safe local poster too
+          onLoadedData={() => setReady(true)}
+          onCanPlayThrough={() => setReady(true)}
+          onPlay={() => setReady(true)}
         >
           <source src="/hero.mp4" type="video/mp4" />
         </video>
-        {/* Gradient overlays */}
+
+        {/* Poster overlay (above) fades out */}
+        <img
+          src="/hero-poster.webp"
+          alt=""
+          aria-hidden
+          className={`${ready ? "opacity-0" : "opacity-100"} pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-700`}
+          loading="eager"
+        />
+
+        {/* Gradients */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-        <div className="pointer-events-none absolute -inset-x-20 -bottom-32 h-64 blur-[80px] opacity-60"
-             style={{background: "radial-gradient(60% 100% at 50% 100%, rgba(168,85,247,0.45) 0%, rgba(34,211,238,0.35) 45%, rgba(251,191,36,0.15) 100%)"}}/>
+        <div
+          className="pointer-events-none absolute -inset-x-20 -bottom-32 h-64 blur-[80px] opacity-60"
+          style={{
+            background:
+              "radial-gradient(60% 100% at 50% 100%, rgba(168,85,247,0.45) 0%, rgba(34,211,238,0.35) 45%, rgba(251,191,36,0.15) 100%)",
+          }}
+        />
       </div>
 
       <motion.div style={{ y, opacity }} className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
@@ -124,6 +162,7 @@ function Hero() {
     </section>
   );
 }
+
 
 /**
  * Showreel — horizontal scroll with snap
@@ -378,7 +417,7 @@ function Footer() {
   return (
     <footer className="relative border-t border-white/10 py-10 text-center text-white/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p>© {new Date().getFullYear()} Crazy Lens Studio — All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Smile Studio — All rights reserved.</p>
       </div>
     </footer>
   );

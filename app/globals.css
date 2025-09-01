@@ -29,3 +29,7 @@ body {
 /* hide horizontal scrollers for the Showreel strip */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+/* hide scrollbars for the horizontal Showreel */
+
+/* ensure full-height root for smoother scroll math */
+html, body { height: 100%; }
