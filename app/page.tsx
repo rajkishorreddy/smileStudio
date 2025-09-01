@@ -42,11 +42,11 @@ function Navbar() {
   return (
     <div className="fixed top-0 inset-x-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+        <div className="mt-4 rounded-2xl border border-white/10 bg-black/50 supports-[backdrop-filter]:bg-black/30 backdrop-blur-xl shadow-lg shadow-black/30">
           <div className="flex items-center justify-between px-4 sm:px-6 py-3">
             <a href="#" className="flex items-center gap-3 group">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-cyan-400 to-amber-300 animate-pulse" />
-              <span className="font-semibold tracking-wider text-white/90 group-hover:text-white transition">SMILE STUDIO</span>
+              <span className="font-semibold tracking-wider text-white/90 group-hover:text-white transition drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">SMILE STUDIO</span>
             </a>
             <nav className="hidden md:flex items-center gap-8 text-sm">
               <a href="#showreel" className="text-white/70 hover:text-white transition">Showreel</a>
@@ -429,6 +429,7 @@ function Footer() {
 function BackdropFX() {
   return (
     <>
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-40 h-36 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
       {/* soft noise overlay */}
       <div
         aria-hidden
