@@ -35,10 +35,10 @@ export default function GalleryModal({
   }, [open, onClose]);
 
   // Respect reduced motion
-  const prefersReduced = React.useMemo(
-    () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
-    []
-  );
+  const prefersReduced =
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true;
+
 
   const active = categories.find((c) => c.id === activeId) ?? categories[0];
   if (!active) return null;
@@ -321,7 +321,7 @@ function PrewarmFadeImage({
   return (
     <div ref={ref} className="absolute inset-0">
       <Image
-        src={src as any}
+        src={src as unknown as StaticImageData}
         alt={alt}
         width={1600}
         height={1200}

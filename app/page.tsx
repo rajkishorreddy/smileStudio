@@ -333,7 +333,7 @@ function BlurFadeImage({
   return (
     <div ref={ref}>
       <Image
-        src={src as any}
+        src={src as unknown as StaticImageData}
         alt={alt}
         placeholder={typeof src === "object" ? "blur" : undefined}
         width={1200}
