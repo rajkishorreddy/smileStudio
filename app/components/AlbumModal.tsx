@@ -5,7 +5,8 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function AlbumModal({
   open,
   onClose,
-  src = "/book/index.html",
+//   src = "/book/index.html",
+    src="/book/"
 }: {
   open: boolean;
   onClose: () => void;

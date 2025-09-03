@@ -1,0 +1,29 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[[redirects]]
+  from = "/textures/*"
+  to   = "/book/textures/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/assets/*"
+  to   = "/book/assets/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/images/*"
+  to   = "/book/images/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/audios/*"
+  to   = "/book/audios/:splat"
+  status = 200
+
+# Optional convenience
+[[redirects]]
+  from = "/book"
+  to   = "/book/"
+  status = 301
