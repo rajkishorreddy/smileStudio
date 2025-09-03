@@ -2,6 +2,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { motion, useScroll, AnimatePresence, useTransform } from "framer-motion";
 import GalleryModal, { type GalleryCategory } from "./components/GalleryModal";
+import dynamic from "next/dynamic";
 
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
@@ -18,6 +19,7 @@ import p10 from "@/public/portfolio/10.webp";
 /**
  * CRAZY LENS STUDIO — Cinematic Landing Page
  */
+const AlbumModal = dynamic(() => import("./components/AlbumModal"), { ssr: false });
 
 export default function CrazyLensStudioPage() {
   return (
@@ -367,21 +369,36 @@ function Portfolio() {
   const [lbOpen, setLbOpen] = useState(false);
   const [lbIndex, setLbIndex] = useState(0);
 
+  const [albumOpen, setAlbumOpen] = useState(false);
+
   return (
     <section id="portfolio" className="relative py-24 scroll-mt-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-10">
-          <h2 className="text-2xl sm:text-3xl font-semibold">Portfolio</h2>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setGalleryOpen(true)}
-              className="rounded-xl border border-white/25 px-3 py-2 text-sm text-white/85 hover:border-white/50 hover:bg-white/10 transition"
-            >
-              View more
-            </button>
-            <a href="#booking" className="text-sm text-white/70 hover:text-white">Book a shoot →</a>
-          </div>
+      <div className="flex items-end justify-between mb-10">
+        <h2 className="text-2xl sm:text-3xl font-semibold">Portfolio</h2>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* NEW: opens the category modal (birthday/marriage) */}
+          <button
+            onClick={() => setGalleryOpen(true)}
+            className="rounded-xl border border-white/20 bg-black/30 supports-[backdrop-filter]:bg-black/20 backdrop-blur px-4 py-2 text-sm text-white/90 hover:border-white/50 hover:bg-black/40 transition"
+          >
+            View more
+          </button>
+
+          {/* existing: opens the 3D album (iframe) */}
+          <button
+            onClick={() => setAlbumOpen(true)}
+            className="rounded-xl border border-white/20 bg-black/30 supports-[backdrop-filter]:bg-black/20 backdrop-blur px-4 py-2 text-sm text-white/90 hover:border-white/50 hover:bg黑/40 transition"
+          >
+            View album
+          </button>
+
+          <a href="#booking" className="text-sm text-white/70 hover:text-white">
+            Book a shoot →
+          </a>
         </div>
+      </div>
 
         {/* Masonry via CSS columns */}
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:_balance]">
@@ -418,6 +435,7 @@ function Portfolio() {
         categories={galleryCategories}
         defaultId="birthday"
       />
+      <AlbumModal open={albumOpen} onClose={() => setAlbumOpen(false)} />
     </section>
   );
 }
