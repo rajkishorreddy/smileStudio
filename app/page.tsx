@@ -1,22 +1,20 @@
 "use client";
 import React, { useMemo, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-
+import { motion, useScroll, AnimatePresence, useTransform } from "framer-motion";
+import Image from "next/image";
+import type { StaticImageData } from "next/image";
+import p01 from "@/public/portfolio/01.webp";
+import p02 from "@/public/portfolio/02.webp";
+import p03 from "@/public/portfolio/03.webp";
+import p04 from "@/public/portfolio/04.webp";
+import p05 from "@/public/portfolio/05.webp";
+import p06 from "@/public/portfolio/06.webp";
+import p07 from "@/public/portfolio/07.webp";
+import p08 from "@/public/portfolio/08.webp";
+import p09 from "@/public/portfolio/09.webp";
+import p10 from "@/public/portfolio/10.webp";
 /**
  * CRAZY LENS STUDIO — Cinematic Landing Page
- * --------------------------------------------------------------
- * Drop this file into: app/page.tsx (Next.js 13/14 app router)
- * TailwindCSS required. Framer Motion for animation.
- * 
- * Optional assets:
- *  - /public/hero.mp4      (background b-roll)
- *  - /public/logo.svg      (your logo)
- *  - Replace Unsplash URLs in <Portfolio/> with your own images/Cloudinary.
- *
- * Notes:
- *  - All sections are in one file for easy copy-paste.
- *  - Minimal external deps: framer-motion only.
- *  - No server calls yet; booking form logs to console.
  */
 
 export default function CrazyLensStudioPage() {
@@ -35,18 +33,18 @@ export default function CrazyLensStudioPage() {
   );
 }
 
-/**
- * Navbar — glass, subtle glow
- */
+/** Navbar — glass, subtle glow */
 function Navbar() {
   return (
     <div className="fixed top-0 inset-x-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mt-4 rounded-2xl border border-white/10 bg-black/50 supports-[backdrop-filter]:bg-black/30 backdrop-blur-xl shadow-lg shadow-black/30">
+        <div className="mt-3 rounded-2xl border border-white/10 bg-black/50 supports-[backdrop-filter]:bg-black/30 backdrop-blur-xl shadow-lg shadow-black/30">
           <div className="flex items-center justify-between px-4 sm:px-6 py-3">
             <a href="#" className="flex items-center gap-3 group">
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-fuchsia-500 via-cyan-400 to-amber-300 animate-pulse" />
-              <span className="font-semibold tracking-wider text-white/90 group-hover:text-white transition drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">SMILE STUDIO</span>
+              <span className="font-semibold tracking-wider text-white/90 group-hover:text-white transition drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
+                SMILE STUDIO
+              </span>
             </a>
             <nav className="hidden md:flex items-center gap-8 text-sm">
               <a href="#showreel" className="text-white/70 hover:text-white transition">Showreel</a>
@@ -65,29 +63,20 @@ function Navbar() {
   );
 }
 
-/**
- * Hero — full screen video background + kinetic headline
- */
+/** Hero — full screen video background + kinetic headline */
 function Hero() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, -150]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
-
   const [ready, setReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Nudge autoplay (especially iOS/Safari)
   React.useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
     const tryPlay = async () => {
-      try {
-        v.muted = true; // must be muted before play on mobile
-        await v.play();
-      } catch {
-        // ignore; poster stays until user interacts
-      }
+      try { v.muted = true; await v.play(); } catch {}
     };
     tryPlay();
   }, []);
@@ -95,7 +84,6 @@ function Hero() {
   return (
     <section ref={ref} className="relative h-[100svh] w-full" aria-label="Hero">
       <div className="absolute inset-0 z-0 overflow-hidden rounded-b-[3rem] border-b border-white/10">
-        {/* Video (below) */}
         <video
           ref={videoRef}
           className="h-full w-full object-cover"
@@ -104,7 +92,6 @@ function Hero() {
           loop
           playsInline
           preload="auto"
-          poster="/hero-poster.webp"      // safe local poster too
           onLoadedData={() => setReady(true)}
           onCanPlayThrough={() => setReady(true)}
           onPlay={() => setReady(true)}
@@ -112,7 +99,7 @@ function Hero() {
           <source src="/hero.mp4" type="video/mp4" />
         </video>
 
-        {/* Poster overlay (above) fades out */}
+        {/* Local poster overlay (fades out) */}
         <img
           src="/hero-poster.webp"
           alt=""
@@ -121,8 +108,16 @@ function Hero() {
           loading="eager"
         />
 
-        {/* Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent" />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(60% 50% at 50% 45%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0) 75%)",
+          }}
+        />
         <div
           className="pointer-events-none absolute -inset-x-20 -bottom-32 h-64 blur-[80px] opacity-60"
           style={{
@@ -137,15 +132,18 @@ function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight"
+          className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight drop-shadow-[0_2px_16px_rgba(0,0,0,0.8)]"
         >
-          Cinematic Frames. <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 via-cyan-300 to-amber-300">Crazy Stories.</span>
+          Cinematic Frames.{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 via-cyan-300 to-amber-300 drop-shadow-[0_1px_12px_rgba(0,0,0,0.7)]">
+            Crazy Stories.
+          </span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25, duration: 0.6 }}
-          className="mt-5 max-w-2xl text-white/70"
+          className="mt-5 max-w-2xl text-white/85 drop-shadow-[0_1px_10px_rgba(0,0,0,0.6)]"
         >
           We craft bold visuals for weddings, fashion, brands & souls that don’t do ordinary.
         </motion.p>
@@ -155,102 +153,316 @@ function Hero() {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="mt-8 flex items-center gap-4"
         >
-          <a href="#portfolio" className="rounded-xl bg-white text-black px-5 py-3 font-medium hover:opacity-90 transition shadow-xl shadow-fuchsia-500/20">View Portfolio</a>
-          <a href="#showreel" className="rounded-xl border border-white/20 px-5 py-3 font-medium text-white/80 hover:text-white hover:border-white/40 transition">Watch Showreel</a>
+          <a href="#portfolio" className="rounded-xl bg-white text-black px-5 py-3 font-medium hover:opacity-90 transition shadow-xl shadow-black/50 ring-1 ring-black/10">
+            View Portfolio
+          </a>
+          <a href="#showreel" className="rounded-xl border border-white/30 px-5 py-3 font-medium text-white/90 hover:text-white hover:border-white/50 transition bg-black/30 supports-[backdrop-filter]:bg-black/20 backdrop-blur-sm">
+            Watch Showreel
+          </a>
         </motion.div>
       </motion.div>
     </section>
   );
 }
 
-
-/**
- * Showreel — horizontal scroll with snap
- */
+/** Showreel — filmstrip with modal-ready posters */
 function Showreel() {
-  const items = [
-    "https://images.unsplash.com/photo-1526178619943-3e7d64b4c990?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1505483531331-8632f46a1f20?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1200&auto=format&fit=crop",
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+
+  const reels = [
+    {
+      title: "Engagement",
+      src: "/hero.mp4",
+      poster:
+        "https://images.unsplash.com/photo-1523369579000-4ec0fe04db44?auto=format&fit=crop&w=1600&h=1000&q=80&crop=faces",
+      duration: "0:52",
+      wide: true,
+    },
+    {
+      title: "Wedding Ceremony",
+      src: "/hero.mp4",
+      poster:
+        "https://images.unsplash.com/photo-1680490964562-60ee7fd82944?auto=format&fit=crop&w=1600&h=1000&q=80&crop=faces",
+      duration: "0:22",
+    },
+    {
+      title: "Reception Evening",
+      src: "/hero.mp4",
+      poster:
+        "https://images.unsplash.com/photo-1740767581333-0e83e94c7f6e?auto=format&fit=crop&w=1600&h=1000&q=80&crop=faces",
+      duration: "0:18",
+    },
+    {
+      title: "Mehndi Night",
+      src: "/hero.mp4",
+      poster:
+        "https://images.unsplash.com/photo-1697347816275-83728d258959?auto=format&fit=crop&w=1600&h=1000&q=80&crop=faces",
+      duration: "0:30",
+    },
+    {
+      title: "Birthday Party",
+      src: "/hero.mp4",
+      poster:
+        "https://images.unsplash.com/photo-1630481721712-0a79d553c1ea?auto=format&fit=crop&w=1600&h=1000&q=80&crop=faces",
+      duration: "0:26",
+    },
   ];
+
+  const scrollBy = (delta: number) => scrollerRef.current?.scrollBy({ left: delta, behavior: "smooth" });
+
   return (
-    <section id="showreel" className="relative py-24">
+    <section id="showreel" className="relative py-24 scroll-mt-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-end justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl sm:text-3xl font-semibold">Showreel</h2>
-          <span className="text-white/50 text-sm">Swipe →</span>
+          <div className="hidden md:flex items-center gap-2 text-sm text-white/60">
+            <button onClick={() => scrollBy(-400)} className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 grid place-items-center" aria-label="Scroll left">←</button>
+            <button onClick={() => scrollBy(400)} className="h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 grid place-items-center" aria-label="Scroll right">→</button>
+          </div>
         </div>
       </div>
-      <div className="overflow-x-auto no-scrollbar">
+
+      {/* edge fades */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-black to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-black to-transparent z-10" />
+
+      <div className="overflow-x-auto no-scrollbar" ref={scrollerRef}>
         <div className="flex snap-x snap-mandatory gap-6 px-6 md:px-12">
-          {items.map((src, i) => (
-            <motion.div
-              whileHover={{ y: -8 }}
-              whileTap={{ scale: 0.98 }}
+          {reels.map((r, i) => (
+            <button
               key={i}
-              className="relative snap-start shrink-0 w-[80vw] sm:w-[60vw] md:w-[40vw] lg:w-[32vw] h-[50vh] rounded-3xl overflow-hidden border border-white/10 bg-white/5"
+              className={`group relative snap-start shrink-0 h-[50vh] rounded-3xl overflow-hidden border border-white/10 bg-white/5 text-left ${
+                r.wide ? "w-[85vw] sm:w-[65vw] md:w-[48vw] lg:w-[40vw]" : "w-[80vw] sm:w-[55vw] md:w-[38vw] lg:w-[30vw]"
+              }`}
+              onClick={() => { setActive(i); setOpen(true); }}
             >
-              <img src={src} alt={`showreel-${i}`} className="h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-            </motion.div>
+              <img
+                src={r.poster}
+                alt={r.title}
+                className="h-full w-full object-cover transform-gpu transition duration-500 ease-out group-hover:scale-[1.03] group-hover:brightness-105"
+                loading="lazy"
+                decoding="async"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = "/hero-poster.webp"; }}
+              />
+              {/* dark overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
+              {/* labels */}
+              <div className="absolute left-4 right-4 bottom-4 flex items-center justify-between">
+                <div>
+                  <div className="text-base font-semibold drop-shadow-[0_1px_6px_rgba(0,0,0,0.8)]">{r.title}</div>
+                  <div className="text-xs text-white/70">{r.duration}</div>
+                </div>
+                <div className="rounded-full bg-white text-black px-3 py-1 text-xs font-medium shadow">▶ Play</div>
+              </div>
+            </button>
           ))}
         </div>
       </div>
+
+      <VideoLightbox open={open} reel={reels[active]} onClose={() => setOpen(false)} />
     </section>
   );
 }
 
-/**
- * Portfolio — responsive masonry grid
- */
+/** Modal player */
+function VideoLightbox({
+  open,
+  reel,
+  onClose,
+}: {
+  open: boolean;
+  reel: { title: string; src: string; poster?: string };
+  onClose: () => void;
+}) {
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    if (open) window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm grid place-items-center p-4">
+      <button aria-label="Close" onClick={onClose} className="absolute top-4 right-4 h-9 w-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20">✕</button>
+      <div className="w-full max-w-5xl">
+        <video className="w-full h-auto rounded-2xl border border-white/10" src={reel.src} poster={reel.poster} autoPlay muted={false} controls playsInline />
+        <div className="mt-3 text-center text-sm text-white/70">{reel.title}</div>
+      </div>
+    </div>
+  );
+}
+
+function BlurFadeImage({
+  src,
+  alt,
+  priority = false,
+  preloadMargin = 360, // px before viewport to start eager loading
+}: {
+  src: StaticImageData | string;
+  alt: string;
+  priority?: boolean;
+  preloadMargin?: number;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const [near, setNear] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  // Mark as "near" slightly before it scrolls into view
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setNear(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: `${preloadMargin}px 0px` }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [preloadMargin]);
+
+  const eager = priority || near; // only first row + near-viewport get eager/high
+
+  return (
+    <div ref={ref}>
+      <Image
+        src={src as any}
+        alt={alt}
+        placeholder={typeof src === "object" ? "blur" : undefined}
+        width={1200}
+        height={1600}
+        sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
+        priority={eager}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : "auto"}
+        onLoadingComplete={() => setLoaded(true)}
+        className={`w-full h-auto object-cover transform-gpu will-change-[opacity,transform]
+          transition-[opacity,transform] duration-700 ease-out
+          ${loaded ? "opacity-100 scale-100" : "opacity-0 scale-[1.01]"}`}
+      />
+    </div>
+  );
+}
+
 function Portfolio() {
+  // Local images (10 .webp files in /public/portfolio)
   const images = useMemo(
-    () => [
-      "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1494386346843-e12284507169?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1500829243541-74b677fecc30?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1520975922323-8d8a0f1d3d8a?q=80&w=1200&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1519408469771-2586093c3f14?q=80&w=1200&auto=format&fit=crop",
-    ],
+    () => [p01, p02, p03, p04, p05, p06, p07, p08, p09, p10],
     []
   );
 
+  const [lbOpen, setLbOpen] = useState(false);
+  const [lbIndex, setLbIndex] = useState(0);
+
   return (
-    <section id="portfolio" className="relative py-24">
+    <section id="portfolio" className="relative py-24 scroll-mt-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-10">
           <h2 className="text-2xl sm:text-3xl font-semibold">Portfolio</h2>
           <a href="#booking" className="text-sm text-white/70 hover:text-white">Book a shoot →</a>
         </div>
+
+        {/* Masonry via CSS columns */}
         <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 [column-fill:_balance]">
-          {images.map((src, i) => (
-            <figure key={i} className="mb-6 break-inside-avoid rounded-3xl overflow-hidden border border-white/10 bg-white/5">
-              <img src={src} alt={`portfolio-${i}`} className="w-full h-auto object-cover" />
+          {images.map((img, i) => (
+            <figure
+              key={(img as StaticImageData).src ?? i}
+              className="mb-6 break-inside-avoid rounded-3xl overflow-hidden border border-white/10 bg-white/5 cursor-zoom-in"
+              onClick={() => { setLbIndex(i); setLbOpen(true); }}
+              style={{ contentVisibility: "auto", containIntrinsicSize: "1000px" }}
+            >
+              <BlurFadeImage
+                src={img}                 // your static import or string path
+                alt={`Portfolio ${i + 1}`}
+                priority={i < 2}          // keep first row as true
+                preloadMargin={360}       // tweak to 240–480 if you want more/less prefetch
+              />
               <figcaption className="p-3 text-xs text-white/60">Shot {i + 1}</figcaption>
             </figure>
           ))}
         </div>
       </div>
+
+      <ImageLightbox
+        open={lbOpen}
+        images={images}
+        index={lbIndex}
+        onClose={() => setLbOpen(false)}
+        onPrev={() => setLbIndex((lbIndex - 1 + images.length) % images.length)}
+        onNext={() => setLbIndex((lbIndex + 1) % images.length)}
+      />
     </section>
   );
 }
 
-/**
- * Behind The Scenes — split layout with parallax copy
- */
+
+function ImageLightbox({
+  open,
+  images,
+  index,
+  onClose,
+  onPrev,
+  onNext,
+}: {
+  open: boolean;
+  images: (string | StaticImageData)[];
+  index: number;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") onPrev();
+      if (e.key === "ArrowRight") onNext();
+    };
+    if (open) window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose, onPrev, onNext]);
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm grid place-items-center p-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <button aria-label="Close" onClick={onClose} className="absolute top-4 right-4 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white/90">✕</button>
+          <button aria-label="Previous" onClick={onPrev} className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white/90 hidden sm:grid place-items-center">←</button>
+          <button aria-label="Next" onClick={onNext} className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white/90 hidden sm:grid place-items-center">→</button>
+
+          {/* Use Next/Image in the modal */}
+          <Image
+            src={images[index]}
+            alt=""
+            width={2000}
+            height={1333}
+            className="max-h-[85vh] max-w-[92vw] object-contain rounded-2xl border border-white/10 shadow-2xl"
+            sizes="92vw"
+            priority
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/** Behind The Scenes — split layout with parallax copy */
 function BTS() {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const x = useTransform(scrollYProgress, [0, 1], [0, -60]);
 
   return (
-    <section id="bts" ref={ref} className="relative py-28">
+    <section id="bts" ref={ref} className="relative py-28 scroll-mt-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 items-center gap-10">
         <div className="relative rounded-3xl overflow-hidden border border-white/10 bg-white/5">
           <img
@@ -267,8 +479,8 @@ function BTS() {
             build scenes that feel alive.
           </p>
           <ul className="text-white/70 space-y-2 text-sm">
-            <li>• Industry‑grade lighting setups with mood gels</li>
-            <li>• Dual‑body workflow for never‑miss moments</li>
+            <li>• Industry-grade lighting setups with mood gels</li>
+            <li>• Dual-body workflow for never-miss moments</li>
             <li>• Instant tether to review and refine on set</li>
           </ul>
         </motion.div>
@@ -277,30 +489,16 @@ function BTS() {
   );
 }
 
-/**
- * Packages — cards with subtle hover motion
- */
+/** Packages — cards with subtle hover motion */
 function Packages() {
   const tiers = [
-    {
-      name: "Portrait",
-      price: "₹9,999",
-      desc: "1 hr shoot • 10 edits • indoor/outdoor",
-    },
-    {
-      name: "Fashion",
-      price: "₹24,999",
-      desc: "Half day • creative direction • 25 edits",
-    },
-    {
-      name: "Wedding",
-      price: "₹79,999",
-      desc: "Full day • team of 3 • highlight film",
-    },
+    { name: "Portrait", price: "₹9,999", desc: "1 hr shoot • 10 edits • indoor/outdoor" },
+    { name: "Fashion",  price: "₹24,999", desc: "Half day • creative direction • 25 edits" },
+    { name: "Wedding",  price: "₹79,999", desc: "Full day • team of 3 • highlight film" },
   ];
 
   return (
-    <section id="packages" className="relative py-24">
+    <section id="packages" className="relative py-24 scroll-mt-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-10">
           <h2 className="text-2xl sm:text-3xl font-semibold">Packages</h2>
@@ -308,18 +506,11 @@ function Packages() {
         </div>
         <div className="grid md:grid-cols-3 gap-6">
           {tiers.map((t) => (
-            <motion.div
-              key={t.name}
-              whileHover={{ y: -8 }}
-              className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent p-6"
-            >
+            <motion.div key={t.name} whileHover={{ y: -8 }} className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent p-6">
               <h4 className="text-xl font-semibold">{t.name}</h4>
               <p className="mt-2 text-sm text-white/70">{t.desc}</p>
               <div className="mt-6 text-3xl font-bold">{t.price}</div>
-              <a
-                href="#booking"
-                className="mt-6 inline-flex items-center justify-center rounded-xl bg-white text-black px-4 py-2 font-medium hover:opacity-90 transition"
-              >
+              <a href="#booking" className="mt-6 inline-flex items-center justify-center rounded-xl bg-white text-black px-4 py-2 font-medium hover:opacity-90 transition">
                 Book {t.name}
               </a>
             </motion.div>
@@ -330,9 +521,7 @@ function Packages() {
   );
 }
 
-/**
- * Booking — simple form with validation message
- */
+/** Booking — simple form with validation message */
 function Booking() {
   const [status, setStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -348,64 +537,38 @@ function Booking() {
       message: String(fd.get("message") ?? ""),
     };
     try {
-      const res = await fetch("/api/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const res = await fetch("/api/book", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       if (!res.ok) throw new Error("Failed");
-      setStatus("ok");
-      form.reset();
-    } catch {
-      setStatus("error");
-    }
+      setStatus("ok"); form.reset();
+    } catch { setStatus("error"); }
   };
 
   return (
-    <section id="booking" className="relative py-28">
+    <section id="booking" className="relative py-28 scroll-mt-28">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-8 md:p-10 backdrop-blur">
           <h2 className="text-2xl sm:text-3xl font-semibold">Book a Shoot</h2>
           <p className="mt-2 text-white/70">Tell us the vibe. We’ll craft the story.</p>
 
           <form onSubmit={onSubmit} className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="text-sm text-white/70">Your Name</label>
-              <input name="name" required className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" />
-            </div>
-            <div>
-              <label className="text-sm text-white/70">Email</label>
-              <input name="email" type="email" required className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" />
-            </div>
-            <div>
-              <label className="text-sm text-white/70">Phone</label>
-              <input name="phone" type="tel" className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" />
-            </div>
+            <div><label className="text-sm text-white/70">Your Name</label><input name="name" required className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" /></div>
+            <div><label className="text-sm text-white/70">Email</label><input name="email" type="email" required className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" /></div>
+            <div><label className="text-sm text-white/70">Phone</label><input name="phone" type="tel" className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" /></div>
             <div>
               <label className="text-sm text-white/70">Shoot Type</label>
               <select name="type" className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30">
-                <option>Portrait</option>
-                <option>Fashion</option>
-                <option>Wedding</option>
-                <option>Brand</option>
+                <option>Portrait</option><option>Fashion</option><option>Wedding</option><option>Brand</option>
               </select>
             </div>
-            <div className="md:col-span-2">
-              <label className="text-sm text-white/70">Message</label>
-              <textarea name="message" rows={4} className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" placeholder="Dates, location, moodboard…" />
-            </div>
+            <div className="md:col-span-2"><label className="text-sm text-white/70">Message</label><textarea name="message" rows={4} className="mt-2 w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 outline-none focus:border-white/30" placeholder="Dates, location, moodboard…" /></div>
             <div className="md:col-span-2 flex items-center justify-between">
               <span className="text-xs text-white/50">We’ll reply within 24 hours.</span>
               <button disabled={status === "loading"} type="submit" className="rounded-xl bg-white text-black px-5 py-3 font-medium hover:opacity-90 transition disabled:opacity-60">
                 {status === "loading" ? "Sending…" : "Send Request"}
               </button>
             </div>
-            {status === "ok" && (
-              <div className="md:col-span-2 text-sm text-emerald-300">Thanks! Your request is in. We’ll reach out soon. ✨</div>
-            )}
-            {status === "error" && (
-              <div className="md:col-span-2 text-sm text-rose-300">Uh oh, something went wrong. Try again.</div>
-            )}
+            {status === "ok" && <div className="md:col-span-2 text-sm text-emerald-300">Thanks! Your request is in. We’ll reach out soon. ✨</div>}
+            {status === "error" && <div className="md:col-span-2 text-sm text-rose-300">Uh oh, something went wrong. Try again.</div>}
           </form>
         </div>
       </div>
@@ -417,19 +580,16 @@ function Footer() {
   return (
     <footer className="relative border-t border-white/10 py-10 text-center text-white/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p>© {new Date().getFullYear()} Smile Studio — All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Crazy Lens Studio — All rights reserved.</p>
       </div>
     </footer>
   );
 }
 
-/**
- * BackdropFX — floating particles + glow
- */
+/** BackdropFX — floating particles + glow */
 function BackdropFX() {
   return (
     <>
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-40 h-36 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
       {/* soft noise overlay */}
       <div
         aria-hidden
@@ -441,17 +601,20 @@ function BackdropFX() {
           backgroundPosition: "0 0, 12px 12px",
         }}
       />
+      {/* top scrim for navbar contrast */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-40 h-36 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
       {/* ambient glow blobs */}
       <div className="pointer-events-none fixed z-0 blur-3xl opacity-40">
-        <div className="absolute -top-24 -left-24 h-[32rem] w-[32rem] rounded-full" style={{
-          background: "radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 60%)",
-        }} />
-        <div className="absolute -bottom-24 -right-24 h-[30rem] w-[30rem] rounded-full" style={{
-          background: "radial-gradient(circle, rgba(34,211,238,0.35) 0%, transparent 60%)",
-        }} />
+        <div
+          className="absolute -top-24 -left-24 h-[32rem] w-[32rem] rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(168,85,247,0.35) 0%, transparent 60%)" }}
+        />
+        <div
+          className="absolute -bottom-24 -right-24 h-[30rem] w-[30rem] rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(34,211,238,0.35) 0%, transparent 60%)" }}
+        />
       </div>
     </>
   );
 }
-
 // Note: scrollbar-hiding utility moved to global CSS to avoid SSR issues in Next.js 13+ / 15.
