@@ -1,6 +1,8 @@
 "use client";
 import React, { useMemo, useRef, useState } from "react";
 import { motion, useScroll, AnimatePresence, useTransform } from "framer-motion";
+import GalleryModal, { type GalleryCategory } from "./components/GalleryModal";
+
 import Image from "next/image";
 import type { StaticImageData } from "next/image";
 import p01 from "@/public/portfolio/01.webp";
@@ -351,6 +353,12 @@ function BlurFadeImage({
 
 function Portfolio() {
   // Local images (10 .webp files in /public/portfolio)
+  const [galleryOpen, setGalleryOpen] = useState(false);
+
+  const galleryCategories: GalleryCategory[] = [
+    { id: "birthday",   label: "Birthday",   folder: "birthday",  count: 17, ext: "webp" },
+    { id: "marriage", label: "marriage", folder: "marriage",  count: 16, ext: "webp" }, 
+  ];
   const images = useMemo(
     () => [p01, p02, p03, p04, p05, p06, p07, p08, p09, p10],
     []
@@ -364,7 +372,15 @@ function Portfolio() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-end justify-between mb-10">
           <h2 className="text-2xl sm:text-3xl font-semibold">Portfolio</h2>
-          <a href="#booking" className="text-sm text-white/70 hover:text-white">Book a shoot →</a>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setGalleryOpen(true)}
+              className="rounded-xl border border-white/25 px-3 py-2 text-sm text-white/85 hover:border-white/50 hover:bg-white/10 transition"
+            >
+              View more
+            </button>
+            <a href="#booking" className="text-sm text-white/70 hover:text-white">Book a shoot →</a>
+          </div>
         </div>
 
         {/* Masonry via CSS columns */}
@@ -395,6 +411,12 @@ function Portfolio() {
         onClose={() => setLbOpen(false)}
         onPrev={() => setLbIndex((lbIndex - 1 + images.length) % images.length)}
         onNext={() => setLbIndex((lbIndex + 1) % images.length)}
+      />
+      <GalleryModal
+        open={galleryOpen}
+        onClose={() => setGalleryOpen(false)}
+        categories={galleryCategories}
+        defaultId="birthday"
       />
     </section>
   );
