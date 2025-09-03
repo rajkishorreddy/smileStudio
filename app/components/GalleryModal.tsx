@@ -5,10 +5,10 @@ import Image, { type StaticImageData } from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 export type GalleryCategory = {
-  id: string;                 // e.g., "birthday"
-  label: string;              // e.g., "Birthday"
-  folder: string;             // folder under /public, e.g., "birthday"
-  count: number;              // how many images (01.webp ... count.webp)
+  id: string;                 
+  label: string;              
+  folder: string;             
+  count: number;              
   ext?: "webp" | "jpg" | "jpeg" | "png";
 };
 
@@ -27,32 +27,35 @@ export default function GalleryModal({
 }: GalleryModalProps) {
   const [activeId, setActiveId] = React.useState(defaultId ?? categories[0]?.id);
 
-  // Close on ESC
+
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     if (open) window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Respect reduced motion
+
   const prefersReduced =
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches === true;
 
 
-  const active = categories.find((c) => c.id === activeId) ?? categories[0];
-  if (!active) return null;
+// make categories safe and compute active WITHOUT early-return
+const safeCats = categories ?? [];
+const active = safeCats.find((c) => c.id === activeId) ?? safeCats[0] ?? null;
 
-  // Build image src list like /birthday/01.webp ... /birthday/10.webp
-  const ex = active.ext ?? "webp";
-  const images: (string | StaticImageData)[] = React.useMemo(
-    () =>
-      Array.from({ length: active.count }, (_, i) => {
-        const n = String(i + 1).padStart(2, "0");
-        return `/${active.folder}/${n}.${ex}`;
-      }),
-    [active.folder, active.count, ex]
-  );
+// extension fallback
+const ex = active?.ext ?? "webp";
+
+// ALWAYS call the hook; return [] when no active
+const images: (string | StaticImageData)[] = React.useMemo(() => {
+  if (!active) return [];
+  return Array.from({ length: active.count }, (_, i) => {
+    const n = String(i + 1).padStart(2, "0");
+    return `/${active.folder}/${n}.${ex}`;
+  });
+}, [active?.folder, active?.count, ex]);
+
 
   return (
     <AnimatePresence>
@@ -64,12 +67,12 @@ export default function GalleryModal({
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
-          {/* Content wrapper (click inside shouldn't close) */}
+
           <div
             className="relative mx-auto h-dvh w-dvw max-w-none p-4 sm:p-6 lg:p-8"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top bar: title + pills */}
+
             <div className="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-3">
               <div className="text-lg sm:text-xl font-semibold">Gallery</div>
               <div className="flex flex-wrap gap-2">
@@ -96,7 +99,7 @@ export default function GalleryModal({
               </button>
             </div>
 
-            {/* Continuous-motion marquee strips */}
+
             <div className="mx-auto mt-6 max-w-7xl">
               <MarqueeStrips images={images} prefersReduced={prefersReduced} />
             </div>
