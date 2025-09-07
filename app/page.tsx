@@ -55,7 +55,7 @@ function Navbar() {
               <a href="#showreel" className="text-white/70 hover:text-white transition">Showreel</a>
               <a href="#portfolio" className="text-white/70 hover:text-white transition">Portfolio</a>
               <a href="#albums" className="text-white/70 hover:text-white transition">Albums</a>
-              <a href="#bts" className="text-white/70 hover:text-white transition">Behind the Scenes</a>
+              {/* <a href="#bts" className="text-white/70 hover:text-white transition">Behind the Scenes</a> */}
               <a href="#packages" className="text-white/70 hover:text-white transition">Packages</a>
               <a href="#booking" className="text-white/70 hover:text-white transition">Book</a>
             </nav>
