@@ -29,7 +29,8 @@ export default function CrazyLensStudioPage() {
       <Hero />
       <Showreel />
       <Portfolio />
-      <BTS />
+      <AlbumTeaserSection />
+      {/* <BTS /> */}
       <Packages />
       <Booking />
       <Footer />
@@ -53,6 +54,7 @@ function Navbar() {
             <nav className="hidden md:flex items-center gap-8 text-sm">
               <a href="#showreel" className="text-white/70 hover:text-white transition">Showreel</a>
               <a href="#portfolio" className="text-white/70 hover:text-white transition">Portfolio</a>
+              <a href="#albums" className="text-white/70 hover:text-white transition">Albums</a>
               <a href="#bts" className="text-white/70 hover:text-white transition">Behind the Scenes</a>
               <a href="#packages" className="text-white/70 hover:text-white transition">Packages</a>
               <a href="#booking" className="text-white/70 hover:text-white transition">Book</a>
@@ -387,12 +389,12 @@ function Portfolio() {
           </button>
 
           {/* existing: opens the 3D album (iframe) */}
-          <button
+          {/* <button
             onClick={() => setAlbumOpen(true)}
             className="rounded-xl border border-white/20 bg-black/30 supports-[backdrop-filter]:bg-black/20 backdrop-blur px-4 py-2 text-sm text-white/90 hover:border-white/50 hover:bg黑/40 transition"
           >
             View album
-          </button>
+          </button> */}
 
           <a href="#booking" className="text-sm text-white/70 hover:text-white">
             Book a shoot →
@@ -415,7 +417,7 @@ function Portfolio() {
                 priority={i < 2}          // keep first row as true
                 preloadMargin={360}       // tweak to 240–480 if you want more/less prefetch
               />
-              <figcaption className="p-3 text-xs text-white/60">Shot {i + 1}</figcaption>
+              {/* <figcaption className="p-3 text-xs text-white/60">Shot {i + 1}</figcaption> */}
             </figure>
           ))}
         </div>
@@ -492,6 +494,93 @@ function ImageLightbox({
         </motion.div>
       )}
     </AnimatePresence>
+  );
+}
+function AlbumTeaserSection() {
+  const [albumOpen, setAlbumOpen] = useState(false);
+
+  // swap to any teaser shot you like
+  const teaserSrc = "/albpre.webp";
+
+  return (
+    <section id="albums" className="relative py-24 scroll-mt-28">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* make both columns share height */}
+        <div className="grid md:grid-cols-2 gap-10 items-stretch">
+          {/* Copy (stretches to same height as the visual) */}
+          <div className="h-full flex flex-col justify-center">
+            <h2 className="text-2xl sm:text-3xl font-semibold">Handcrafted Wedding Albums</h2>
+            <p className="mt-3 text-white/70">
+              We design and print premium lay-flat albums—archival paper, rich color, and cover
+              materials that last. Your story, printed to keep.
+            </p>
+            <ul className="mt-5 text-sm text-white/70 space-y-2">
+              <li>• Lay-flat binding, archival lustre/matte paper</li>
+              <li>• 10×10″ or 12×12″; linen/leather covers &amp; foil deboss</li>
+              <li>• Professional design included + two revision rounds</li>
+              <li>• Parent mini-books available</li>
+              <li>• Typical turnaround: 2–3 weeks</li>
+            </ul>
+
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <button
+                onClick={() => setAlbumOpen(true)}
+                className="rounded-xl cursor-pointer bg-white text-black px-5 py-3 font-medium hover:opacity-90 transition shadow"
+              >
+                Flip a sample online
+              </button>
+              <a
+                href="#booking"
+                className="rounded-xl border border-white/30 px-5 py-3 font-medium text-white/90 hover:border-white/50 transition"
+              >
+                Request pricing
+              </a>
+            </div>
+
+            <p className="mt-3 text-xs text-white/50">
+              Note: the online flipbook is a digital preview of layouts. The final product is a
+              printed, handcrafted album.
+            </p>
+          </div>
+
+          {/* Visual teaser (same height, fully clickable + hover motion) */}
+          <button
+            type="button"
+            onClick={() => setAlbumOpen(true)}
+            aria-label="Open album flipbook"
+            className="group cursor-pointer relative rounded-3xl overflow-hidden border border-white/10 bg-white/5 h-full min-h-[420px] w-full text-left focus:outline-none focus:ring-2 focus:ring-white/40"
+          >
+            {/* subtle hover tilt/scale */}
+            <motion.div
+              className="absolute inset-0"
+              whileHover={{ scale: 1.02, rotateX: -2, rotateY: 2 }}
+              transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            >
+              <Image
+                src={teaserSrc}
+                alt="Heirloom photo album preview"
+                fill
+                sizes="(min-width:1024px) 50vw, 100vw"
+                className="object-cover"
+                priority
+              />
+            </motion.div>
+
+            {/* top/bottom gradients for contrast */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/30 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 to-transparent" />
+
+            {/* moving shine */}
+            <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <div className="absolute -left-1/3 top-0 h-full w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/25 to-transparent transform translate-x-[-40%] transition-transform duration-700 group-hover:translate-x-[220%]" />
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* 3D flipbook modal */}
+      <AlbumModal open={albumOpen} onClose={() => setAlbumOpen(false)} />
+    </section>
   );
 }
 

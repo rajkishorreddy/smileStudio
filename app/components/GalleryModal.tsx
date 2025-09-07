@@ -4,6 +4,7 @@ import React from "react";
 import Image, { type StaticImageData } from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
+
 export type GalleryCategory = {
   id: string;                 
   label: string;              
